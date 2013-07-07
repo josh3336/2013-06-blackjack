@@ -17,14 +17,23 @@ class window.AppView extends Backbone.View
 
   initialize: ->
     @render()
-    @model.get('playerHand').on 'bust', =>
-      @$('.message').text('You busted!')
-      @$el.find('.stand-button, .hit-button').hide()
-    @model.on 'checkScore', =>
-      @$('.message').text(@model.get('outcome'))
+    @newgame()
+
 
   render: ->
     @$el.children().detach()
     @$el.html @template()
     @$('.player-hand-container').html new HandView(collection: @model.get 'playerHand').el
     @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
+
+  newgame: ->
+    @model.on 'newgame', => 
+      @newgame()
+      @render
+    @model.get('playerHand').on 'bust', =>
+      @$('.message').text('You busted!')
+      @$el.find('.stand-button, .hit-button').hide()
+    @model.on 'checkScore', =>
+      @$('.message').text('You busted!')
+      @$el.find('.stand-button, .hit-button').hide()
+      @$('.message').text(@model.get('outcome'))

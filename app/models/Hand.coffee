@@ -23,6 +23,9 @@ class window.Hand extends Backbone.Collection
     , 0
     if hasAce then [score, score + 10] else [score]
 
+
+
+    
   dealergo: ->
     while @scores()[0] < 17
       @hit()

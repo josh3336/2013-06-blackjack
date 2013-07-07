@@ -4,10 +4,8 @@ class window.App extends Backbone.Model
   initialize: ->
     @set 'outcome', false
     @set 'deck', deck = new Deck()
-    @set 'playerHand', deck.dealPlayer()
-    @set 'dealerHand', deck.dealDealer()
-    @get('playerHand').on 'stand', => @stand()
-    @get('dealerHand').on 'checkScore', => @checkScore()
+    @set 'count', 0
+    @newgame()
     return
 
   stand: ->
@@ -15,18 +13,31 @@ class window.App extends Backbone.Model
     @get('dealerHand').dealergo()
 
   checkScore: ->
-    if @get('playerHand').scores()[0] > @get('dealerHand').scores()[0]
+    console.log(@get 'deck')
+    if @get('dealerHand').scores()[0] > 21
+      @set 'outcome', 'Dealer Busts! YOU Sir are the winner!'
+      @trigger('checkScore')
+    else if @get('playerHand').scores()[0] > @get('dealerHand').scores()[0]
       @set 'outcome', "You win!"
       @trigger ('checkScore')
-    else if @get('playerHand').scores()[0] < @get('dealerHand').scores()[0]
+    else if @get('playerHand').scores()[0] < @get('dealerHand').scores()[0] 
       @set 'outcome', "You lose, haha!"
       @trigger ('checkScore')
     else
       @set 'outcome', "You tie!"
       @trigger ('checkScore')
 
+  checkCount: ->
+
+
   newgame: ->
     console.log('newgame')
-    @set 'deck', deck = new Deck()
-    @set 'playerHand', deck.dealPlayer()
-    @set 'dealerHand', deck.dealDealer()
+    @set 'playerHand', @get('deck').dealPlayer()
+    @set 'dealerHand', @get('deck').dealDealer()
+    @get('playerHand').on 'stand', => @stand()
+    @get('dealerHand').on 'checkScore', => @checkScore()
+    @get('dealerHand').on 'checkCount', => @checkCount()
+    @get('dealerHand').on 'checkCount', => @checkCount()
+
+
+    @trigger 'newgame'
