@@ -2,10 +2,9 @@
 class window.App extends Backbone.Model
 
   initialize: ->
-    @set 'outcome', false
     @set 'deck', deck = new Deck()
-    @set 'count', 0
     @newgame()
+    @set 'count',0
     return
 
   stand: ->
@@ -13,14 +12,19 @@ class window.App extends Backbone.Model
     @get('dealerHand').dealergo()
 
   checkScore: ->
-    console.log(@get 'deck')
-    if @get('dealerHand').scores()[0] > 21
+    @set 'count' , @get('dealerHand').handcount()+ @get('count')
+    @set 'count' , @get('playerHand').handcount()+ @get('count')
+    console.log(@get('count'))
+    if @get('playerHand').currentscore() > 21
+      @set 'outcome', 'Busted Bigtime Yea...'
+      @trigger ('checkScore')
+    else if @get('dealerHand').currentscore() > 21
       @set 'outcome', 'Dealer Busts! YOU Sir are the winner!'
       @trigger('checkScore')
-    else if @get('playerHand').scores()[0] > @get('dealerHand').scores()[0]
+    else if @get('playerHand').currentscore() > @get('dealerHand').currentscore()
       @set 'outcome', "You win!"
       @trigger ('checkScore')
-    else if @get('playerHand').scores()[0] < @get('dealerHand').scores()[0] 
+    else if @get('playerHand').currentscore() < @get('dealerHand').currentscore()
       @set 'outcome', "You lose, haha!"
       @trigger ('checkScore')
     else
@@ -28,16 +32,26 @@ class window.App extends Backbone.Model
       @trigger ('checkScore')
 
   checkCount: ->
+    console.log(@get 'count')
+    countguess = prompt ("what's the count?")
+    console.log(countguess,@get('count').toString())
+    console.log(countguess.toString() == @get('count'.toString()))
+    if (countguess!= @get('count'.toString()))
+      alert('wrong the count is actually '+ @get 'count')
+    else
+      alert('You got it right... Impressive.')
+
 
 
   newgame: ->
-    console.log('newgame')
+    console.log(@get('deck').length)
+    if @get('deck').length < 25
+      @checkCount()
     @set 'playerHand', @get('deck').dealPlayer()
     @set 'dealerHand', @get('deck').dealDealer()
     @get('playerHand').on 'stand', => @stand()
+    @get('playerHand').on 'checkScore', => @checkScore()
     @get('dealerHand').on 'checkScore', => @checkScore()
     @get('dealerHand').on 'checkCount', => @checkCount()
     @get('dealerHand').on 'checkCount', => @checkCount()
-
-
     @trigger 'newgame'

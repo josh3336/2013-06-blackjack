@@ -30,10 +30,7 @@ class window.AppView extends Backbone.View
     @model.on 'newgame', => 
       @newgame()
       @render
-    @model.get('playerHand').on 'bust', =>
-      @$('.message').text('You busted!')
-      @$el.find('.stand-button, .hit-button').hide()
     @model.on 'checkScore', =>
-      @$('.message').text('You busted!')
       @$el.find('.stand-button, .hit-button').hide()
       @$('.message').text(@model.get('outcome'))
+      @render
